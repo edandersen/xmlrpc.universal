@@ -172,6 +172,8 @@ namespace XmlRpcPortable.Converter
         #region MapFrom
         public static XmlRpcValue MapFrom(object value, Type toType)
         {
+            var valueType = value.GetType();
+            var valueTypeInfo = valueType.GetTypeInfo();
 
             switch (toType.ToString())
             {
@@ -232,7 +234,7 @@ namespace XmlRpcPortable.Converter
                     break;
 
                 default:
-                    switch (value.GetType().Name)
+                    switch (valueType.Name)
                     {
                         case "Int32":
                             return new XmlRpcInt((int)value);
@@ -247,7 +249,26 @@ namespace XmlRpcPortable.Converter
                             return new XmlRpcBoolean((bool)value);
                             break;
                         default:
-                            return new XmlRpcString(value.ToString());
+                            if (valueTypeInfo.IsEnum)
+                            {
+                                var replaceMappers = valueTypeInfo.GetCustomAttributes<XmlRpcConverterReplaceAttribute>();
+
+                                var enumVal = value.ToString();
+
+                                if (replaceMappers != null && replaceMappers.Count() > 0)
+                                {
+                                    foreach (var replace in replaceMappers)
+                                    {
+                                        enumVal = enumVal.Replace(replace.NewValue, replace.OldValue);
+                                    }
+                                }
+
+                                return new XmlRpcString(enumVal);
+                            }
+                            else
+                            {
+                                return new XmlRpcString(value.ToString());
+                            }
                             break;
                     }
                     return new XmlRpcString(value.ToString());
