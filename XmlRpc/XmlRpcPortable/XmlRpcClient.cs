@@ -87,7 +87,7 @@ namespace XmlRpcPortable
                     var ret = new XmlRpcResponse(node);
                     return ret;
                 }
-                throw new XmlRpcException();
+                throw new XmlRpcException(801, "Response failed to return proper XML response");
 
             }
             catch (Exception ex)
@@ -98,7 +98,7 @@ namespace XmlRpcPortable
                 }
                 else
                 {
-                    throw new XmlRpcException();
+                    throw new XmlRpcException(800, "Unknown error occurred.");
                 }
             }
 

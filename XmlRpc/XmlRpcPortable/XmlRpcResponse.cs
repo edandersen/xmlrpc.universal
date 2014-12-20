@@ -39,7 +39,7 @@ namespace XmlRpcPortable
                 }
                 else
                 {
-                    throw new XmlRpcException();
+                    throw new XmlRpcException(802, "Improper response XML structure");
                 }
             }
         }

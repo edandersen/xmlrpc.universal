@@ -16,6 +16,12 @@ namespace XmlRpcPortable
         public int XmlRpcCode { private set; get; }
         public string XmlRpcMessage { private set; get; }
 
+        public XmlRpcException(int code, string message)
+        {
+            XmlRpcCode = code;
+            XmlRpcMessage = message;
+        }
+
         public XmlRpcException(IXmlNode node)
         {
             var val = XmlRpcParser.Parse(node);

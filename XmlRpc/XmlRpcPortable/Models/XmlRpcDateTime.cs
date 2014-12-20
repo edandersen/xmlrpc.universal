@@ -14,9 +14,20 @@ namespace XmlRpcPortable.Models
         {
             DateTime val = DateTime.MinValue;
 
-            if (!DateTime.TryParse(node.InnerText, null, DateTimeStyles.RoundtripKind, out val))
+            if (!DateTime.TryParse(node.InnerText, out val))
             {
-                DateTime.TryParseExact(node.InnerText, "yyyyMMddThh:mm:ss", null, DateTimeStyles.None, out val);
+                // Fix for non UTC
+                var arr = node.InnerText.Split(new char[] { 'T' });
+
+                if (arr.Length > 1)
+                {
+                    if (arr[0].Length == 8)
+                    {
+                        var newVal = string.Format("{0}-{1}-{2}T{3}", arr[0].Substring(0, 4), arr[0].Substring(4, 2), arr[0].Substring(6, 2), arr[1]);
+
+                        DateTime.TryParse(newVal, out val);
+                    }
+                }
             }
 
             Value = val;

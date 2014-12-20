@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="Converter\XmlRpcConverter.cs" />
     <Compile Include="Converter\XmlRpcConverterReplaceAttribute.cs" />
+    <Compile Include="Converter\XmlRpcIgnoreAttribute.cs" />
     <Compile Include="Converter\XmlRpcNameAttribute.cs" />
     <Compile Include="Converter\XmlRpcTypeAttribute.cs" />
     <Compile Include="Models\XmlRpcArray.cs" />

@@ -25,7 +25,7 @@ namespace XmlRpcPortable.Converter
                 else
                 {
                     // throw error because passed in type isnt an array
-                    throw new XmlRpcException();
+                    throw new XmlRpcException(841, "Array types must be mapped to a XmlRpcArray");
                 }
             }
             else
@@ -44,7 +44,6 @@ namespace XmlRpcPortable.Converter
                         }
                         else
                         {
-                            // throw error because value wasn't a struct and can't map
                             return null;
                             //throw new XmlRpcException();
                         }
@@ -94,8 +93,6 @@ namespace XmlRpcPortable.Converter
         public static object MapTo<T>(XmlRpcValue value)
         {
             return MapTo(value, typeof(T));
-
-            throw new XmlRpcException();
         }
 
         public static object MapArrayTo(XmlRpcArray value, Type toType)
@@ -164,7 +161,7 @@ namespace XmlRpcPortable.Converter
                 }
             }
 
-            throw new XmlRpcMapperException();
+            throw new XmlRpcException(842, "Failed to map object to XmlRpcStruct");
         }
 
         #endregion
@@ -251,19 +248,29 @@ namespace XmlRpcPortable.Converter
                         default:
                             if (valueTypeInfo.IsEnum)
                             {
-                                var replaceMappers = valueTypeInfo.GetCustomAttributes<XmlRpcConverterReplaceAttribute>();
 
-                                var enumVal = value.ToString();
+                                var fieldInfo = valueType.GetRuntimeField(value.ToString());
+                                var ignoreAttr = fieldInfo.GetCustomAttribute<XmlRpcIgnoreAttribute>();
 
-                                if (replaceMappers != null && replaceMappers.Count() > 0)
+                                if (ignoreAttr != null)
                                 {
-                                    foreach (var replace in replaceMappers)
-                                    {
-                                        enumVal = enumVal.Replace(replace.NewValue, replace.OldValue);
-                                    }
+                                    return null;
                                 }
+                                else
+                                {
+                                    var enumVal = value.ToString();
 
-                                return new XmlRpcString(enumVal);
+                                    var replaceMappers = valueTypeInfo.GetCustomAttributes<XmlRpcConverterReplaceAttribute>();
+
+                                    if (replaceMappers != null && replaceMappers.Count() > 0)
+                                    {
+                                        foreach (var replace in replaceMappers)
+                                        {
+                                            enumVal = enumVal.Replace(replace.NewValue, replace.OldValue);
+                                        }
+                                    }
+                                    return new XmlRpcString(enumVal);
+                                }
                             }
                             else
                             {
