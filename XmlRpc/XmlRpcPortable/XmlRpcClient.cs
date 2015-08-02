@@ -15,6 +15,8 @@ namespace XmlRpcPortable
     {
         private Uri _uri;
 
+        public static string Useragent { get; set; }
+
         public XmlRpcClient(Uri uri)
         {
             _uri = uri;
@@ -61,18 +63,25 @@ namespace XmlRpcPortable
             {
                 var client = new HttpClient();
 
+                if (Useragent != null)
+                {
+                    client.DefaultRequestHeaders.UserAgent.Add(new Windows.Web.Http.Headers.HttpProductInfoHeaderValue(Useragent));
+                }
+
                 var inputPars = sb.ToString();
 
                 var result = await client.PostAsync(_uri, new HttpStringContent(inputPars, Windows.Storage.Streams.UnicodeEncoding.Utf8, "text/xml"));
 
                 var results = await result.Content.ReadAsStringAsync();
 
+                result.EnsureSuccessStatusCode();
+
                 result.Dispose();
                 client.Dispose();
 
                 sb.Clear();
 
-                var resultDoc = new XmlDocument();
+                var resultDoc = new Windows.Data.Xml.Dom.XmlDocument();
                 var settings = new XmlLoadSettings()
                 {
                     ElementContentWhiteSpace = false
@@ -98,7 +107,7 @@ namespace XmlRpcPortable
                 }
                 else
                 {
-                    throw new XmlRpcException(800, "Unknown error occurred.");
+                    throw new XmlRpcException(800, ex.Message);
                 }
             }
 
