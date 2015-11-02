@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -229,6 +230,10 @@ namespace XmlRpcPortable.Converter
                     return new XmlRpcString(value.ToString());
 
                     break;
+                case "XmlRpcPortable.Models.XmlRpcBinary":
+                    return new XmlRpcBinary((MemoryStream)value);
+
+                    break;
 
                 default:
                     switch (valueType.Name)
@@ -245,6 +250,9 @@ namespace XmlRpcPortable.Converter
                         case "Boolean":
                             return new XmlRpcBoolean((bool)value);
                             break;
+                        case "System.IO.MemoryStream":
+                        case "MemoryStream":
+                            return new XmlRpcBinary((MemoryStream)value);
                         default:
                             if (valueTypeInfo.IsEnum)
                             {

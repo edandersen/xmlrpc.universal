@@ -126,6 +126,7 @@
     <Compile Include="Converter\XmlRpcNameAttribute.cs" />
     <Compile Include="Converter\XmlRpcTypeAttribute.cs" />
     <Compile Include="Models\XmlRpcArray.cs" />
+    <Compile Include="Models\XmlRpcBinary.cs" />
     <Compile Include="Models\XmlRpcBoolean.cs" />
     <Compile Include="Models\XmlRpcDateTime.cs" />
     <Compile Include="Models\XmlRpcDouble.cs" />
